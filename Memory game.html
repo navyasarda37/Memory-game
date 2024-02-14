@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .memory-card {
+      width: 100px;
+      height: 100px;
+      background-color: #DDD;
+      margin: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .matched {
+      background-color: #8eff8e; /* Change color for matched cards */
+    }
+  </style>
+  <title>Memory Game</title>
+</head>
+<body>
+  <div class="memory-game">
+    <!-- Memory cards will be dynamically added here with JavaScript -->
+  </div>
+
+  <script>
+    const memoryGame = document.querySelector('.memory-game');
+    const emojis = ['🌈', '🌸', '🌼', '🍀', '🌺', '🌻', '🍄', '🌹'];
+
+    for (let i = emojis.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
+    }
+
+    emojis.forEach((emoji, index) => {
+      const card = document.createElement('div');
+      card.classList.add('memory-card');
+      card.dataset.index = index;
+      card.innerHTML = `<span>${emoji}</span>`;
+      memoryGame.appendChild(card);
+
+      card.addEventListener('click', flipCard);
+    });
+
+    let flippedCards = [];
+    let locked = false;
+
+    function flipCard() {
+      if (locked) return;
+      this.classList.add('flipped');
+      flippedCards.push(this);
+
+      if (flippedCards.length === 2) {
+        locked = true;
+        setTimeout(checkMatch, 1000);
+      }
+    }
+
+    function checkMatch() {
+      const [card1, card2] = flippedCards;
+      const isMatch = card1.innerHTML === card2.innerHTML;
+
+      if (isMatch) {
+        card1.classList.add('matched');
+        card2.classList.add('matched');
+      } else {
+        card1.classList.remove('flipped');
+        card2.classList.remove('flipped');
+      }
+
+      flippedCards = [];
+      locked = false;
+    }
+  </script>
+</body>
+</html>
